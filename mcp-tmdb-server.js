@@ -2,9 +2,10 @@
 // Implements a simple Model Context Protocol server exposing tools to search TMDB and get details.
 // Requirements: Node.js 18+ (for global fetch) or install node-fetch if older. Uses @modelcontextprotocol/sdk.
 
-import {Server} from "@modelcontextprotocol/sdk/server/index.js";
-import {StdioServerTransport} from "@modelcontextprotocol/sdk/server/stdio.js";
-import {CallToolRequestSchema, ListToolsRequestSchema} from "@modelcontextprotocol/sdk/types.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { FileAdapter, TraceMiddleware } from "mcp-trace";
 
 // Use proxy base and TMDB Authorization token from environment variable for TMDB calls via proxy
 const TMDB_AUTH_TOKEN = process.env.TMDB_AUTH_TOKEN;
@@ -63,6 +64,11 @@ const server = new Server({
         tools: {},
     },
 });
+
+// Enable tracing with FileAdapter
+const traceFilePath = process.env.TRACE_FILE || "trace.log";
+const traceMiddleware = new TraceMiddleware({ adapter: new FileAdapter(traceFilePath) });
+traceMiddleware.init(server);
 
 // Helper: send logs to the LLM provider (best-effort, non-bloccante)
 async function sendLog(level, data) {

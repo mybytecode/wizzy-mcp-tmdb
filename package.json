@@ -37,7 +37,8 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.4.0"
+    "@modelcontextprotocol/sdk": "^1.4.0",
+    "mcp-trace": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
